@@ -1,0 +1,25 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = MyApp
+  FILE_GUID                      = fe59cb82-130c-4287-ad31-e35fd4d0a8dc
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UefiMain
+  UEFI_HII_RESOURCE_SECTION      = TRUE
+
+
+[Sources]
+  MyApp.c
+  Elf32.c
+  LibC.c
+  Info.c
+  
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiLib
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
