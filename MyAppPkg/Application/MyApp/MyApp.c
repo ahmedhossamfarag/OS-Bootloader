@@ -115,7 +115,7 @@ UefiMain (
     if(EFI_ERROR(Status)){
       Print(L"Failed To Load Kernel");
     }else{
-      Print(L"Kerenel Loaded Successfully\n");
+      Print(L"Kernel Loaded Successfully\n");
       Handoff(ST, KernelEntry);      
     }
 
