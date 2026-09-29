@@ -5,7 +5,7 @@
 #include <Protocol/SimpleFileSystem.h>
 #include <Library/UefiBootServicesTableLib.h>
 
-#include "Elf32.h"
+#include "Elf64.h"
 #include "Info.h"
 
 #define FILE_NPAGES 64
@@ -19,9 +19,9 @@ EFI_STATUS KernelLoad(IN EFI_SYSTEM_TABLE * ST, OUT EFI_PHYSICAL_ADDRESS* Kernel
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem;
     EFI_FILE_PROTOCOL* Root;
     EFI_FILE_PROTOCOL* File;
-    UINT32 FileSize = FILE_NPAGES * 1024;
+    UINT64 FileSize = FILE_NPAGES * 1024;
     CHAR8* Buffer;
-    Elf32_Map map;
+    Elf64_Map map;
     EFI_PHYSICAL_ADDRESS Kernel;
     BOOLEAN Load_Success = FALSE;
 
@@ -38,13 +38,13 @@ EFI_STATUS KernelLoad(IN EFI_SYSTEM_TABLE * ST, OUT EFI_PHYSICAL_ADDRESS* Kernel
         if(!EFI_ERROR(Status)){
           Status = File->Read(File, &FileSize, Buffer);
           if(!EFI_ERROR(Status)){
-            if(Elf32GetMap(&map, (CHAR8*)Buffer)){
-              if(Efl32CheckSupported(map.ehdr) && Elf32CheckExecutabel(map.ehdr)){
+            if(Elf64GetMap(&map, (CHAR8*)Buffer)){
+              if(Elf64CheckSupported(map.ehdr) && Elf64CheckExecutabel(map.ehdr)){
                 if(map.nphdr){
                   Kernel = map.phdr[0].p_vaddr;
                   Status = ST->BootServices->AllocatePages(AllocateAddress, EfiLoaderCode, FILE_NPAGES, &Kernel);
                   if(!EFI_ERROR(Status)){
-                    Elf32LoadFile(&map, 0);
+                    Elf64LoadFile(&map, 0);
                     *KernelEntry = map.ehdr->e_entry;
                     Load_Success = TRUE;
                   }
@@ -59,7 +59,7 @@ EFI_STATUS KernelLoad(IN EFI_SYSTEM_TABLE * ST, OUT EFI_PHYSICAL_ADDRESS* Kernel
     }
 
     if(!Load_Success){
-      ST->BootServices->FreePages((UINT32)Buffer, FILE_NPAGES);
+      ST->BootServices->FreePages((UINT64)Buffer, FILE_NPAGES);
     }
 
     return Load_Success? EFI_SUCCESS : EFI_UNSUPPORTED;
@@ -81,11 +81,11 @@ VOID Handoff(IN EFI_SYSTEM_TABLE* ST, IN EFI_PHYSICAL_ADDRESS KernelEntry){
       }
 
       asm("cli\n\t"
-          "mov $0x1, %%ebx\n\t"
-          "mov %%ebx, %%cr0\n\t"
-          "xor %%ebx, %%ebx\n\t"
-          "mov %%ebx, %%cr4\n\t"
-          "mov %%ebx, %%cr3\n\t"
+          "mov $0x1, %%rbx\n\t"
+          "mov %%rbx, %%cr0\n\t"
+          "xor %%rbx, %%rbx\n\t"
+          "mov %%rbx, %%cr4\n\t"
+          "mov %%rbx, %%cr3\n\t"
           "call %0"
           ::   "m"(KernelEntry), "a"(LOADER_GUID), "c"(MI), "d"(GI)
       );

@@ -3,21 +3,21 @@
 
 typedef struct
 {
-    UINT32 FameBufferBase;
-    UINT32 FrameBufferSize;
-    UINT32 Width;
-    UINT32 Height;
-    UINT32 PixelFormat;
-    UINT32 PixelsPerScanLine;
-    UINT32 RedMask;
-    UINT32 GreenMask;
-    UINT32 BlueMask;                  
+    UINT64 FameBufferBase;
+    UINT64 FrameBufferSize;
+    UINT64 Width;
+    UINT64 Height;
+    UINT64 PixelFormat;
+    UINT64 PixelsPerScanLine;
+    UINT64 RedMask;
+    UINT64 GreenMask;
+    UINT64 BlueMask;                  
 } GraphicsInfo;
 
 typedef struct
 {
-    UINT32 MomorySizeInMB;
-    UINT32 RSDP;
+    UINT64 MomorySizeInMB;
+    UINT64 RSDP;
 } MemoryInfo;
 
 EFI_STATUS GetGraphicsInfo(IN EFI_SYSTEM_TABLE* ST, OUT GraphicsInfo** GI);

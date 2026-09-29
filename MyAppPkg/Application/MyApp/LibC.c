@@ -1,15 +1,15 @@
 #include "LibC.h"
 
-VOID MemCopy(CHAR8 *from, CHAR8 *to, UINT32 size)
+VOID MemCopy(CHAR8 *from, CHAR8 *to, UINT64 size)
 {
    if(to < from){
         __asm__ __volatile__ (
             "cld\n\t"                      // Clear the direction flag to ensure forward copying
-            "rep movsd\n\t"                // Copy 32-bit chunks
-            "mov %3, %%ecx\n\t"            // Remaining bytes count
+            "rep movsd\n\t"                // Copy 64-bit chunks
+            "mov %3, %%rcx\n\t"            // Remaining bytes count
             "rep movsb"                    // Copy remaining bytes
             : /* No output operands */
-            : "D" (to), "S" (from), "c" (size / 4), "r" (size % 4)
+            : "D" (to), "S" (from), "c" (size / 8), "r" (size % 8)
             : "memory"
         );
    }else if(to > from){
@@ -24,7 +24,7 @@ VOID MemCopy(CHAR8 *from, CHAR8 *to, UINT32 size)
    }
 }
 
-CHAR8 *MemSet(CHAR8 *dest, CHAR8 val, UINT32 count) {
+CHAR8 *MemSet(CHAR8 *dest, CHAR8 val, UINT64 count) {
     asm volatile (
         "cld\n\t"            // Clear the direction flag to ensure forward direction
         "rep stosb"          // Repeat the `stosb`(store string byte) instruction `count` times
