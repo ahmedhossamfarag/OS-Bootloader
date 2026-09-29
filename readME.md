@@ -1,6 +1,6 @@
-# Building a 32-bit (IA32) UEFI Application using EDK II
+# Building a 64-bit (X64) UEFI Application using EDK II
 
-This guide provides step-by-step instructions to clone and configure **EDK II**, install the required 32-bit toolchain dependencies on Linux/Ubuntu, compile the EDK II BaseTools, and build a 32-bit UEFI application (`IA32`).
+This guide provides step-by-step instructions to clone and configure **EDK II**, install the required 64-bit toolchain dependencies on Linux/Ubuntu, compile the EDK II BaseTools, and build a 64-bit UEFI application (`X64`).
 
 ---
 
@@ -11,9 +11,9 @@ This guide provides step-by-step instructions to clone and configure **EDK II**,
 
 ---
 
-## Step 1: Install System Dependencies & 32-bit GCC Support
+## Step 1: Install System Dependencies & 64-bit GCC Support
 
-Modern Linux distributions require specific development packages, Python tools, and multi-architecture libraries to compile 32-bit (`-m32`) binaries.
+Modern Linux distributions require specific development packages, Python tools, and multi-architecture libraries.
 
 Run the following commands in your terminal:
 
@@ -69,13 +69,13 @@ Copy `MyAppPkg` to the Edk2 Folder `/../edk2/`
 
 ---
 
-## Step 4: Build Your 32-bit UEFI Application
+## Step 4: Build Your 64-bit UEFI Application
 
-Once your workspace and environment variables are active, you can compile your custom package for the 32-bit architecture (`IA32`) using the generic `GCC` toolchain tag:
+Once your workspace and environment variables are active, you can compile your custom package for the 64-bit architecture (`X64`) using the generic `GCC` toolchain tag:
 
 ```bash
-build -p MyAppPkg/MyAppPkg.dsc -a IA32 -t GCC
+build -p MyAppPkg/MyAppPkg.dsc -a X64 -t GCC
 ```
 
 ### Output Location
-After a successful build, your compiled UEFI binary (`.efi`) will be located in the build output directory: `/../edk2/Build/MyApp/DEBUG_GCC/IA32`
+After a successful build, your compiled UEFI binary (`.efi`) will be located in the build output directory: `/../edk2/Build/MyApp/DEBUG_GCC/X64`
