@@ -7,8 +7,7 @@ EFI_STATUS GetGraphicsInfo(IN EFI_SYSTEM_TABLE* ST, OUT GraphicsInfo** GI){
     EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
     UINTN SizeOfInfo;
-    UINT64 ModeNumber;
-
+    UINT32 ModeNumber;
     Status = ST->BootServices->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&GraphicsOutput);
     if (EFI_ERROR(Status)) {
         return Status;
@@ -42,7 +41,7 @@ EFI_STATUS GetGraphicsInfo(IN EFI_SYSTEM_TABLE* ST, OUT GraphicsInfo** GI){
 }
 
 static UINT64 GetRSDP(IN EFI_SYSTEM_TABLE* ST){
-    for (UINT64 i = 0; i < ST->NumberOfTableEntries; i++)
+    for (UINTN i = 0; i < ST->NumberOfTableEntries; i++)
     {
         EFI_CONFIGURATION_TABLE CT = ST->ConfigurationTable[i];
         UINT64* Signature = (UINT64*) CT.VendorTable;

@@ -4,14 +4,14 @@
 typedef struct
 {
     UINT64 FameBufferBase;
-    UINT64 FrameBufferSize;
-    UINT64 Width;
-    UINT64 Height;
-    UINT64 PixelFormat;
-    UINT64 PixelsPerScanLine;
-    UINT64 RedMask;
-    UINT64 GreenMask;
-    UINT64 BlueMask;                  
+    UINT32 FrameBufferSize;
+    UINT32 Width;
+    UINT32 Height;
+    UINT32 PixelFormat;
+    UINT32 PixelsPerScanLine;
+    UINT32 RedMask;
+    UINT32 GreenMask;
+    UINT32 BlueMask;                  
 } GraphicsInfo;
 
 typedef struct
