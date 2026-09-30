@@ -5,7 +5,7 @@ VOID MemCopy(CHAR8 *from, CHAR8 *to, UINT64 size)
    if(to < from){
         __asm__ __volatile__ (
             "cld\n\t"                      // Clear the direction flag to ensure forward copying
-            "rep movsd\n\t"                // Copy 64-bit chunks
+            "rep movsq\n\t"                // Copy 64-bit chunks
             "mov %3, %%rcx\n\t"            // Remaining bytes count
             "rep movsb"                    // Copy remaining bytes
             : /* No output operands */
@@ -29,7 +29,7 @@ CHAR8 *MemSet(CHAR8 *dest, CHAR8 val, UINT64 count) {
         "cld\n\t"            // Clear the direction flag to ensure forward direction
         "rep stosb"          // Repeat the `stosb`(store string byte) instruction `count` times
         :                    // No output operands
-        : "a" (val), "D" (dest), "c" (count)  // Input operands: AL (value), EDI (destination), and ECX (count)
+        : "a" (val), "D" (dest), "c" (count)  // Input operands: AL (value), RDI (destination), and RCX (count)
         : "memory"           // Clobber list: memory
     );
     return dest;

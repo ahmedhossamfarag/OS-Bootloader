@@ -8,7 +8,7 @@
 #include "Elf64.h"
 #include "Info.h"
 
-#define FILE_NPAGES 64
+#define FILE_NPAGES 128
 #define LOADER_GUID 0x12345678
 
 EFI_STATUS KernelLoad(IN EFI_SYSTEM_TABLE * ST, OUT EFI_PHYSICAL_ADDRESS* KernelEntry){
@@ -81,11 +81,6 @@ VOID Handoff(IN EFI_SYSTEM_TABLE* ST, IN EFI_PHYSICAL_ADDRESS KernelEntry){
       }
 
       asm("cli\n\t"
-          "mov $0x1, %%rbx\n\t"
-          "mov %%rbx, %%cr0\n\t"
-          "xor %%rbx, %%rbx\n\t"
-          "mov %%rbx, %%cr4\n\t"
-          "mov %%rbx, %%cr3\n\t"
           "call %0"
           ::   "m"(KernelEntry), "a"(LOADER_GUID), "c"(MI), "d"(GI)
       );
