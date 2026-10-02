@@ -1,6 +1,8 @@
 #include "Info.h"
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 
 EFI_STATUS GetGraphicsInfo(IN EFI_SYSTEM_TABLE* ST, OUT GraphicsInfo** GI){
     EFI_STATUS Status;
@@ -40,15 +42,16 @@ EFI_STATUS GetGraphicsInfo(IN EFI_SYSTEM_TABLE* ST, OUT GraphicsInfo** GI){
     return EFI_SUCCESS;
 }
 
-static UINT64 GetRSDP(IN EFI_SYSTEM_TABLE* ST){
-    for (UINTN i = 0; i < ST->NumberOfTableEntries; i++)
-    {
-        EFI_CONFIGURATION_TABLE CT = ST->ConfigurationTable[i];
-        UINT64* Signature = (UINT64*) CT.VendorTable;
-        if(*Signature == EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE){
-            return (UINT64) CT.VendorTable;
+static UINT64 GetRSDP(IN EFI_SYSTEM_TABLE* ST)
+{
+    for (UINTN i = 0; i < ST->NumberOfTableEntries; i++) {
+        EFI_CONFIGURATION_TABLE *CT = &ST->ConfigurationTable[i];
+
+        if (CompareGuid(&CT->VendorGuid, &gEfiAcpi20TableGuid)) {
+            return (UINT64) CT->VendorTable;
         }
     }
+
     return 0;
 }
 
@@ -70,6 +73,8 @@ EFI_STATUS GetMemoryInfo(IN EFI_SYSTEM_TABLE* ST, OUT MemoryInfo** MI){
     if (Status != EFI_BUFFER_TOO_SMALL) {
         return Status;
     }
+
+    MemoryMapSize += DescriptorSize * 10; // Add some extra space for new descriptors
 
     ST->BootServices->AllocatePool(EfiLoaderCode, MemoryMapSize, (VOID**)&MemoryMap);
     if (MemoryMap == NULL) {
