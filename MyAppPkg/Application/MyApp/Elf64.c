@@ -112,27 +112,13 @@ BOOLEAN Elf64LoadFile(IN Elf64_Map* map, IN VOID* offset){
     for (UINT64 i = 0; i < map->nphdr; i++)
     {
         if(phdr->p_type == PT_LOAD){
-
             // copy data
-            MemCopy(file + phdr->p_offset, org + phdr->p_vaddr, MIN(phdr->p_memsz, phdr->p_filesz));
+            MemCopy(file + phdr->p_offset, org + phdr->p_paddr, MIN(phdr->p_memsz, phdr->p_filesz));
             if(phdr->p_memsz > phdr->p_filesz){
                 MemSet(org + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
             }
         }
         phdr ++ ;
-    }
-
-    // set bss sections to zero
-    Elf64_Shdr* shdr = map->shdr;
-    for (UINT64 i = 0; i < map->nshdr; i++)
-    {
-        if(shdr->sh_type == SHT_NOBITS){
-
-            // set region to 0
-            MemSet((CHAR8*)org + shdr->sh_addr, 0, shdr->sh_size);
-        }
-
-        shdr ++;
     }
 
     return 1;

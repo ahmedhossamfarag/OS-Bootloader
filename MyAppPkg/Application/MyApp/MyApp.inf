@@ -13,6 +13,7 @@
   Elf64.c
   LibC.c
   Info.c
+  Paging.c
   
 [Packages]
   MdePkg/MdePkg.dec

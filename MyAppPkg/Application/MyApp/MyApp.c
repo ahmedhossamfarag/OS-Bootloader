@@ -7,6 +7,7 @@
 
 #include "Elf64.h"
 #include "Info.h"
+#include "Paging.h"
 
 #define FILE_NPAGES 128
 #define LOADER_GUID 0x12345678
@@ -41,11 +42,12 @@ EFI_STATUS KernelLoad(IN EFI_SYSTEM_TABLE * ST, OUT EFI_PHYSICAL_ADDRESS* Kernel
             if(Elf64GetMap(&map, (CHAR8*)Buffer)){
               if(Elf64CheckSupported(map.ehdr) && Elf64CheckExecutabel(map.ehdr)){
                 if(map.nphdr){
-                  Kernel = map.phdr[0].p_vaddr;
+                  Kernel = map.phdr[0].p_paddr;
+                  Elf64_Addr Physical_Virtual_Offset = map.phdr[0].p_vaddr - map.phdr[0].p_paddr;
                   Status = ST->BootServices->AllocatePages(AllocateAddress, EfiLoaderCode, FILE_NPAGES, &Kernel);
                   if(!EFI_ERROR(Status)){
                     Elf64LoadFile(&map, 0);
-                    *KernelEntry = map.ehdr->e_entry;
+                    *KernelEntry = map.ehdr->e_entry - Physical_Virtual_Offset;
                     Load_Success = TRUE;
                   }
                 }
@@ -79,6 +81,17 @@ VOID Handoff(IN EFI_SYSTEM_TABLE* ST, IN EFI_PHYSICAL_ADDRESS KernelEntry){
       if(EFI_ERROR(Status)){
         MI = 0;
       }
+
+      EFI_PHYSICAL_ADDRESS Pml4;
+
+      Status = CreateIdentityPaging4GB (&Pml4);
+
+      if (EFI_ERROR (Status)) {
+          Print (L"CreateIdentityPaging4GB failed: %r\n", Status);
+          return;
+      }
+
+      AsmWriteCr3 (Pml4);
 
       asm("cli\n\t"
           "call %0"
